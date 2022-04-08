@@ -2,6 +2,7 @@ def SERVICE_NAME = "invoice-service"
 pipeline {
     agent any
     environment {
+        PROD_URL = 'http://localhost:3000' 
         QA_URL = 'http://localhost:3020' 
         DOCKER_REGISTRY = 'amilcarm11' 
         // REGISTRY_URL = 'https://harbor.tallerdevops.com/' 
@@ -32,9 +33,9 @@ pipeline {
                         IMAGE_TAG = "develop-${SHORT_COMMIT_HASH}"
                         IMAGE_TAG_ALT = "develop"
                     }
-                    // Rama main
-                    else if(env.BRANCH_NAME == 'main') {
-                        IMAGE_TAG = "main-${SHORT_COMMIT_HASH}"
+                    // Rama master
+                    else if(env.BRANCH_NAME == 'master') {
+                        IMAGE_TAG = "master-${SHORT_COMMIT_HASH}"
                         IMAGE_TAG_ALT = 'latest'
                     } else {
                         // Ramas de feature, release, hotfix, bugfix, support
@@ -69,17 +70,17 @@ pipeline {
             steps {
                 script {
                     echo "Correr pruebas automáticas..."
-                    // TODO: sh "./mvnw test"
+                    sh "./mvnw test"
                 }
             }
         }
         stage("Docker Image") {
             // Se construye imagen de Docker para las ramas de git-flow 
-            //      (main, develop, feature, release, hotfix, bugfix, release, support)
+            //      (master, develop, feature, release, hotfix, bugfix, release, support)
             // y para las tags de git, siempre que cumplan las convenciones de nombre para Docker Image tag.
             when { 
                 anyOf { 
-                    branch "main";
+                    branch "master";
                     branch "develop";
                     branch pattern: "(feature|release|hotfix|bugfix|support)/(\\S+)", comparator: "REGEXP";
                     tag pattern: "[\\w][\\w.-]{0,127}", comparator: "REGEXP";
@@ -155,6 +156,14 @@ pipeline {
                         // Aplicar el manifiesto.
                         sh 'kubectl apply -f ./k8s/deployment.yml -n prod'
                     }
+                }
+            }
+            post {
+                success {
+                    slackSend message: "Deployed image `${IMAGE_FULL_NAME}` to <${env.PROD_URL}|PROD env>"
+                }
+                failure {
+                    slackSend color: "warning",  message: "Could not deploy image `${IMAGE_FULL_NAME}` to <${env.PROD_URL}|PROD env>"
                 }
             }
         }
