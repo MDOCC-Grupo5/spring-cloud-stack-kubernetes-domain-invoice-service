@@ -32,9 +32,9 @@ pipeline {
                         IMAGE_TAG = "develop-${SHORT_COMMIT_HASH}"
                         IMAGE_TAG_ALT = "develop"
                     }
-                    // Rama main
-                    else if(env.BRANCH_NAME == 'main') {
-                        IMAGE_TAG = "main-${SHORT_COMMIT_HASH}"
+                    // Rama master
+                    else if(env.BRANCH_NAME == 'master') {
+                        IMAGE_TAG = "master-${SHORT_COMMIT_HASH}"
                         IMAGE_TAG_ALT = 'latest'
                     } else {
                         // Ramas de feature, release, hotfix, bugfix, support
@@ -75,11 +75,11 @@ pipeline {
         }
         stage("Docker Image") {
             // Se construye imagen de Docker para las ramas de git-flow 
-            //      (main, develop, feature, release, hotfix, bugfix, release, support)
+            //      (master, develop, feature, release, hotfix, bugfix, release, support)
             // y para las tags de git, siempre que cumplan las convenciones de nombre para Docker Image tag.
             when { 
                 anyOf { 
-                    branch "main";
+                    branch "master";
                     branch "develop";
                     branch pattern: "(feature|release|hotfix|bugfix|support)/(\\S+)", comparator: "REGEXP";
                     tag pattern: "[\\w][\\w.-]{0,127}", comparator: "REGEXP";
