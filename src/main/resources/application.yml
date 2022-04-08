@@ -1,0 +1,25 @@
+server:
+  port: ${PORT:0}
+
+spring:
+  devtools:
+    livereload:
+      enabled: false
+  datasource:
+    username: ${POSTGRES_USER:invoice}
+    password: ${POSTGRES_PASSWORD:1234}
+    url: jdbc:postgresql://${POSTGRES_URL:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:invoice}
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    hibernate:
+      ddl-auto: create
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health
