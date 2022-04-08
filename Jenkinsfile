@@ -2,6 +2,7 @@ def SERVICE_NAME = "invoice-service"
 pipeline {
     agent any
     environment {
+        PROD_URL = 'http://localhost:3000' 
         QA_URL = 'http://localhost:3020' 
         DOCKER_REGISTRY = 'amilcarm11' 
         // REGISTRY_URL = 'https://harbor.tallerdevops.com/' 
@@ -69,7 +70,7 @@ pipeline {
             steps {
                 script {
                     echo "Correr pruebas automáticas..."
-                    // TODO: sh "./mvnw test"
+                    sh "./mvnw test"
                 }
             }
         }
@@ -155,6 +156,14 @@ pipeline {
                         // Aplicar el manifiesto.
                         sh 'kubectl apply -f ./k8s/deployment.yml -n prod'
                     }
+                }
+            }
+            post {
+                success {
+                    slackSend message: "Deployed image `${IMAGE_FULL_NAME}` to <${env.PROD_URL}|PROD env>"
+                }
+                failure {
+                    slackSend color: "warning",  message: "Could not deploy image `${IMAGE_FULL_NAME}` to <${env.PROD_URL}|PROD env>"
                 }
             }
         }
