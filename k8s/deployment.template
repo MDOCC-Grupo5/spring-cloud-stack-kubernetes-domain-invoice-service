@@ -25,7 +25,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: domain-invoice-deployment
-  namespace: default
   annotations:
     sidecar.istio.io/inject: "true"
   labels:
