@@ -115,7 +115,7 @@ pipeline {
                     // Reemplazar el nombre de la imagen
                     sh "sed 's|NOMBRE_IMAGEN|${IMAGE_FULL_NAME}|' ./k8s/deployment.template > ./k8s/deployment.yml"
                     // Aplicar el manifiesto.
-                    sh 'kubectl apply -f ./k8s/deployment.yml'
+                    sh 'kubectl apply -f -n qa ./k8s/deployment.yml'
                 }
             }
             post {
@@ -124,6 +124,37 @@ pipeline {
                 }
                 failure {
                     slackSend color: "warning",  message: "Could not deploy image `${IMAGE_FULL_NAME}` to <${env.QA_URL}|QA env>"
+                }
+            }
+        }
+
+        stage("Deploy Prod") {
+            when { tag "" }
+            options {
+                timeout(time: 3, unit: "MINUTES")
+            }
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'webhook_secret', variable: 'SECRET')]) { 
+                        // Registrar el Webhook
+                        hook = registerWebhook(authToken: SECRET)
+                        echo "Waiting for POST to ${hook.url}\n"
+
+                        // Notificar Slack
+                        slackSend message: "To deploy, run: \n```curl -X POST -d 'OK' -H \"Authorization: ${SECRET}\" ${hook.url}```"
+                        
+                        // Obtener respuesta
+                        data = waitForWebhook hook
+                        echo "Webhook called with data: ${data}"
+                    }
+
+                    // Desplegar a Producción
+                    withKubeConfig([credentialsId: 'kube-config', serverUrl: "https://192.168.0.10:6443"]) {
+                        // Reemplazar el nombre de la imagen
+                        sh "sed 's|NOMBRE_IMAGEN|${IMAGE_FULL_NAME}|' ./k8s/deployment.template > ./k8s/deployment.yml"
+                        // Aplicar el manifiesto.
+                        sh 'kubectl apply -f -n prod ./k8s/deployment.yml'
+                    }
                 }
             }
         }
