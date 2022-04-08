@@ -1,0 +1,25 @@
+spring:
+  devtools:
+    livereload:
+      enabled: false
+  datasource:
+    username: sa
+    password:
+    url: jdbc:h2:mem:invoice
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    database: H2
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, health
