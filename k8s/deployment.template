@@ -60,5 +60,7 @@ spec:
                   key: POSTGRES_PASSWORD
             - name: POSTGRES_URL
               value: postgres-service
+            - name: CURRENT_ENV
+              value: ENV_NAME
           ports:
             - containerPort: 8080
