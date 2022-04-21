@@ -40,7 +40,7 @@ public class InvoiceController {
 
     @GetMapping("/hello")
     public ResponseEntity<String> hello() {
-        return ResponseEntity.ok(String.format("Hello, from env: %s", CURRENT_ENV));
+        return ResponseEntity.ok(String.format("Hola, desde el, from env: %s", CURRENT_ENV));
     }
 
     @GetMapping("/{id}")
