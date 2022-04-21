@@ -154,7 +154,7 @@ pipeline {
                         // Reemplazar el nombre de la imagen
                         sh "sed 's|NOMBRE_IMAGEN|${IMAGE_FULL_NAME}|' ./k8s/deployment.template > ./k8s/deployment.yml"
                         // Aplicar el manifiesto.
-                        sh 'kubectl apply -f ./k8s/deployment.yml -n prod'
+                        sh 'kubectl apply -f ./k8s/deployment.yml -n default'
                     }
                 }
             }
