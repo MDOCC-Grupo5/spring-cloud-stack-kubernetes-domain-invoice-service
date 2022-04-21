@@ -2,8 +2,8 @@ def SERVICE_NAME = "invoice-service"
 pipeline {
     agent any
     environment {
-        PROD_URL = 'http://localhost:3000' 
-        QA_URL = 'http://localhost:3020' 
+        PROD_URL = 'http://200.25.13.202/api/invoices/v1' 
+        QA_URL = 'http://200.25.13.202:31000/api/invoices/v1' 
         DOCKER_REGISTRY = 'amilcarm11' 
         // REGISTRY_URL = 'https://harbor.tallerdevops.com/' 
     }

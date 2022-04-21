@@ -27,6 +27,9 @@ public class InvoiceController {
 
     private final InvoiceService invoiceService;
 
+    // Read environment variables
+    private String CURRENT_ENV = System.getenv().get("CURRENT_ENV");   
+
     @GetMapping
     public ResponseEntity<List<InvoiceUserDto>> findAll() {
         var invoiceList = invoiceService.findAll().stream()
@@ -37,7 +40,7 @@ public class InvoiceController {
 
     @GetMapping("/hello")
     public ResponseEntity<String> hello() {
-        return ResponseEntity.ok("Hello world");
+        return ResponseEntity.ok(String.format("Hello, from env: %s", CURRENT_ENV));
     }
 
     @GetMapping("/{id}")
