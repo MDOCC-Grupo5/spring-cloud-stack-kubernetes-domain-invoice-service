@@ -36,7 +36,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/hello")
-    public ResponseEntity<List<InvoiceUserDto>> findAll() {
+    public ResponseEntity<String> hello() {
         return ResponseEntity.ok("Hello world");
     }
 
