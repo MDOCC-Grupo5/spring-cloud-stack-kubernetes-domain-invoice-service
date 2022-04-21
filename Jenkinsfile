@@ -114,9 +114,9 @@ pipeline {
             steps {
                 withKubeConfig([credentialsId: 'kube-config', serverUrl: "https://192.168.0.10:6443"]) {
                     // Reemplazar el nombre de la imagen
-                    sh "sed 's|NOMBRE_IMAGEN|${IMAGE_FULL_NAME}|' ./k8s/deployment.template > ./k8s/deployment.yml"
+                    sh "sed 's|NOMBRE_IMAGEN|${IMAGE_FULL_NAME}|;s/ENV_NAME/dev/' ./k8s/deployment.template > ./k8s/deployment.yml"
                     // Aplicar el manifiesto.
-                    sh 'kubectl apply -f ./k8s/deployment.yml -n qa'
+                    sh 'kubectl apply -f ./k8s/deployment.yml -n default'
                 }
             }
             post {
@@ -152,7 +152,7 @@ pipeline {
                     // Desplegar a Producción
                     withKubeConfig([credentialsId: 'kube-config', serverUrl: "https://192.168.0.10:6443"]) {
                         // Reemplazar el nombre de la imagen
-                        sh "sed 's|NOMBRE_IMAGEN|${IMAGE_FULL_NAME}|' ./k8s/deployment.template > ./k8s/deployment.yml"
+                        sh "sed 's|NOMBRE_IMAGEN|${IMAGE_FULL_NAME}|;s/ENV_NAME/prod/' ./k8s/deployment.template > ./k8s/deployment.yml"
                         // Aplicar el manifiesto.
                         sh 'kubectl apply -f ./k8s/deployment.yml -n default'
                     }
