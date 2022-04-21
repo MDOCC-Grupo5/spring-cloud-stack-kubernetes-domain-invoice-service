@@ -37,7 +37,7 @@ public class InvoiceController {
 
     @GetMapping("/hello")
     public ResponseEntity<String> hello() {
-        return ResponseEntity.ok("Hello world");
+        return ResponseEntity.ok("Hello world (from dev)");
     }
 
     @GetMapping("/{id}")
