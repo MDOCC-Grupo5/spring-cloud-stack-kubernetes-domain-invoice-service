@@ -35,6 +35,11 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceList);
     }
 
+    @GetMapping("/hello")
+    public ResponseEntity<String> hello() {
+        return ResponseEntity.ok("Hello world");
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<InvoiceUserDto> findById(
         @PathVariable @Min(value = 1, message = "invalid Id") Long id) {
